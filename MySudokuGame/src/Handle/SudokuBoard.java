@@ -23,7 +23,6 @@ import javax.swing.Timer;
 public class SudokuBoard extends JFrame implements ActionListener {
 
     private JTextField[][] board;
-    private JButton solveButton;
     private JButton CheckButton;
     private JButton newButton;
     private JButton easyButton;
@@ -34,6 +33,7 @@ public class SudokuBoard extends JFrame implements ActionListener {
     private Timer gameTimer;
     public Time time;
     private int[][] values;
+    SudokuSolver solve = new SudokuSolver(values);
     private static final int[] GAME_TIMES = {1000, 700, 400}; // Time limits in seconds
 
     private int currentDifficulty;
@@ -183,7 +183,6 @@ public class SudokuBoard extends JFrame implements ActionListener {
                     if (value.isEmpty()) {
                         JOptionPane.showMessageDialog(this, "The Sudoku board is not complete yet.");
                         return false;
-                       
                     }
                     int number = Integer.parseInt(value);
                     if (number < 1 || number > 9) {
@@ -220,8 +219,8 @@ public class SudokuBoard extends JFrame implements ActionListener {
             }
         }
         // Check if the value is valid for the box
-        int subBoardRow = row / 3 * 3;
-        int subBoardCol = col / 3 * 3;
+        int subBoardRow = row - row%3;
+        int subBoardCol = col - col%3;
         for (int i = subBoardRow; i < subBoardRow + 3; i++) {
             for (int j = subBoardCol; j < subBoardCol + 3; j++) {
                 if (values[i][j] == value && i != row && j != col) {
@@ -262,8 +261,14 @@ public class SudokuBoard extends JFrame implements ActionListener {
             if (val == 1) {
                 val = val + rand.nextInt(3);
             }
-              if (val == 2) {
+            if (val == 2) {
                 val = val + rand.nextInt(3);
+            }
+            if (val == 3) {
+                val = val + rand.nextInt(2);
+            }
+              if (val == 4) {
+                val = val + rand.nextInt(2);
             }
             if (isValidValue(row, col, val)) {
                 candidates.add(val);

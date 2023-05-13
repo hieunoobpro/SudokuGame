@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 public class SudokuSolver {
 
+    public SudokuSolver(int[][] values1) {
+    }
+
     private int[][] values;
      private boolean solveSudokuHelper(int[][] values, int row, int col) {
         if (row == 9) {
