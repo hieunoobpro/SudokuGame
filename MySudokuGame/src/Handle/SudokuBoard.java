@@ -1,4 +1,3 @@
-
 package Handle;
 
 import java.awt.BorderLayout;
@@ -21,12 +20,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.Timer;
 
+public class SudokuBoard extends JFrame implements ActionListener {
 
-public class SudokuBoard extends JFrame implements ActionListener{
-private JTextField[][] board;
-    SudokuSolver solve =new SudokuSolver();
+    private JTextField[][] board;
     private JButton solveButton;
-    private JButton clearButton;
     private JButton CheckButton;
     private JButton newButton;
     private JButton easyButton;
@@ -35,18 +32,21 @@ private JTextField[][] board;
     private JLabel timerLabel;
     private int timeRemaining;
     private Timer gameTimer;
+    public Time time;
     private int[][] values;
-    private static final int[] GAME_TIMES = {1000, 600, 300}; // Time limits in seconds
+    private static final int[] GAME_TIMES = {1000, 700, 400}; // Time limits in seconds
 
     private int currentDifficulty;
     private static final int NUM_EMPTY_CELLS = 50; // Change to adjust difficulty
 
     public SudokuBoard() {
+        //Create board
         setTitle("Sudoku Game");
         setSize(600, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
         JPanel TimePanel = new JPanel();
+        //add Time
         timerLabel = new JLabel("Time: " + timeRemaining + " seconds");
         timerLabel.setForeground(Color.BLACK); // Set foreground color
         TimePanel.add(timerLabel);
@@ -54,12 +54,13 @@ private JTextField[][] board;
         JLabel backgroundLabel = new JLabel(new ImageIcon("/Pictures/background.jpg"));
         backgroundLabel.setLayout(new BorderLayout());
         this.setContentPane(backgroundLabel);
-        
+
         JPanel boardPanel = new JPanel();
         boardPanel.setLayout(new GridLayout(9, 9, 2, 2));
         boardPanel.setBackground(Color.BLACK); // Set background color
         boardPanel.setSize(500, 500);
-        
+
+        //Create lines 
         board = new JTextField[9][9];
         this.setLocationRelativeTo(null);
         Font font = new Font("Arial", Font.BOLD, 20); // Customize font for better visibility
@@ -67,6 +68,7 @@ private JTextField[][] board;
         boardPanel.setBackground(Color.BLACK); // Set background color
         currentDifficulty = 0;
         timeRemaining = GAME_TIMES[currentDifficulty];
+        //Time method
         gameTimer = new Timer(1000, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (timeRemaining > 0) {
@@ -86,13 +88,13 @@ private JTextField[][] board;
                 }
             }
         });
-        
+//Create row and column
         board = new JTextField[9][9];
         for (int blockRow = 0; blockRow < 3; blockRow++) {
             for (int blockCol = 0; blockCol < 3; blockCol++) {
                 JPanel blockPanel = new JPanel();
                 blockPanel.setLayout(new GridLayout(3, 3, 2, 2)); // Add spacing between cells
-                //blockPanel.setBackground(Color.WHITE); // Set background color
+                blockPanel.setBackground(Color.WHITE); // Set background color
                 for (int row = blockRow * 3; row < blockRow * 3 + 3; row++) {
                     for (int col = blockCol * 3; col < blockCol * 3 + 3; col++) {
                         board[row][col] = new JTextField(1);
@@ -104,7 +106,7 @@ private JTextField[][] board;
                 boardPanel.add(blockPanel);
             }
         }
-        
+//Create Buttons
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(Color.BLACK); // Set background color
         CheckButton = new JButton("Check");
@@ -113,71 +115,48 @@ private JTextField[][] board;
         CheckButton.setFont(font);
         CheckButton.addActionListener(this);
         buttonPanel.add(CheckButton);
-        
-        clearButton = new JButton("Clear");
-        clearButton.addActionListener(this);
-        clearButton.setBackground(Color.RED); // Set background color
-        clearButton.setForeground(Color.WHITE); // Set foreground color
-        clearButton.setFont(font); // Set font for button
-        buttonPanel.add(clearButton);
-        
-        solveButton = new JButton("Solve");
-        solveButton.setBackground(Color.YELLOW); // Set background color
-        solveButton.setForeground(Color.BLACK); // Set foreground color
-        solveButton.setFont(font);
-        solveButton.addActionListener(this);
-        buttonPanel.add(solveButton);
-        
+
         newButton = new JButton("New Game");
         newButton.addActionListener(this);
         newButton.setBackground(Color.BLUE); // Set background color
         newButton.setForeground(Color.WHITE); // Set foreground color
         newButton.setFont(font); // Set font for button
         buttonPanel.add(newButton);
-        
+
         JMenuBar menuBar = new JMenuBar();
-        JMenu file = new JMenu("Setting");
+        JMenu file = new JMenu("Level");
         file.setBackground(Color.blue);
         file.setForeground(Color.red);
-        
+
         easyButton = new JButton("Easy");
         easyButton.addActionListener(this);
         easyButton.setMaximumSize(new Dimension(300, 1000));
         file.add(easyButton);
-        
+
         mediumButton = new JButton("Medium");
         mediumButton.addActionListener(this);
         mediumButton.setSize(200, 100);
         file.add(mediumButton);
-        
+
         hardButton = new JButton("Hard");
         hardButton.addActionListener(this);
         hardButton.setMaximumSize(new Dimension(300, 1000));
         file.add(hardButton);
-        
+
         menuBar.add(file);
         menuBar.add(TimePanel, BorderLayout.WEST);
-        
+
         add(menuBar, BorderLayout.PAGE_START);
         add(boardPanel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
-        
+
         setVisible(true);
     }
-    
+//actionPerformed for buttons
+
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == CheckButton) {
-            if (checkSolution()) {
-                JOptionPane.showMessageDialog(this, "Congratulations! You completed the Sudoku game.");
-                gameTimer.stop();
-            } else {
-                JOptionPane.showMessageDialog(this, "The Sudoku board is not complete yet.");
-            }
-        } else if (e.getSource() == solveButton) {
-            solveSudoku();
-            gameTimer.stop();
-        } else if (e.getSource() == clearButton) {
-            clearBoard();
+            checkSolution();
         } else if (e.getSource() == newButton) {
             timeRemaining = GAME_TIMES[currentDifficulty];
             newGame();
@@ -195,41 +174,54 @@ private JTextField[][] board;
             newGame();
         }
     }
-    
+
     private boolean checkSolution() {
-        for (int row = 0; row < 9; row++) {
-            for (int col = 0; col < 9; col++) {
-                String value = board[row][col].getText();
-                if (value.isEmpty()) {
-                    return false;
-                }
-                int number = Integer.parseInt(value);
-                if (number < 1 || number > 9) {
-                    return false;
-                }
-                if (!isValidValue(row, col, number)) {
-                    return false;
+        try {
+            for (int row = 0; row < 9; row++) {
+                for (int col = 0; col < 9; col++) {
+                    String value = board[row][col].getText();
+                    if (value.isEmpty()) {
+                        JOptionPane.showMessageDialog(this, "The Sudoku board is not complete yet.");
+                        return false;
+                       
+                    }
+                    int number = Integer.parseInt(value);
+                    if (number < 1 || number > 9) {
+                        JOptionPane.showMessageDialog(this, "Please enter number from 1 to 9 only.");
+                        return false;
+                    }
+                    if (!isValidValue(row, col, number)) {
+                        JOptionPane.showMessageDialog(this, "The value of number is not corectr.");
+                        return false;
+                    }
                 }
             }
+        } catch (NumberFormatException ev) {
+            JOptionPane.showMessageDialog(this, "Please enter integer number from 1 to 9 only.");
+            return false;
         }
+        JOptionPane.showMessageDialog(this, "Congratulation, you have complete the game!");
         return true;
     }
-    
+
+    // Check the valid of a number through row, col and box
     private boolean isValidValue(int row, int col, int value) {
-        // Check if the value is valid for the given cell
+        if (value < 1 || value > 9) {
+            return false;
+        }
         for (int i = 0; i < 9; i++) {
+            // Check if the value is valid for the column
             if (values[row][i] == value && i != col) {
                 return false;
             }
-            
+            // Check if the value is valid for the row
             if (values[i][col] == value && i != row) {
                 return false;
             }
         }
-        
+        // Check if the value is valid for the box
         int subBoardRow = row / 3 * 3;
         int subBoardCol = col / 3 * 3;
-        
         for (int i = subBoardRow; i < subBoardRow + 3; i++) {
             for (int j = subBoardCol; j < subBoardCol + 3; j++) {
                 if (values[i][j] == value && i != row && j != col) {
@@ -237,39 +229,10 @@ private JTextField[][] board;
                 }
             }
         }
-        
         return true;
     }
-    
-    private void solveSudoku() {
-        values = new int[9][9];
-        boolean isCorrect = true;
-        for (int row = 0; row < 9; row++) {
-            for (int col = 0; col < 9; col++) {
-                String valueString = board[row][col].getText();
-                if (valueString.equals("")) {
-                    values[row][col] = 0;
-                } else {
-                    values[row][col] = Integer.parseInt(valueString);
-                }
-            }
-            if (solveSudokuHelper(values, 0, 0)) {
-                for (row = 0; row < 9; row++) {
-                    for (int col = 0; col < 9; col++) {
-                        board[row][col].setText(Integer.toString(values[row][col]));
-                    }
-                }
-            } else {
-                JOptionPane.showMessageDialog(this, "Cannot solve Sudoku puzzle.");
-            }
-            // Code to check if input is correct goes here
-            // Display message if input is correct
-            if (isCorrect) {
-                JOptionPane.showMessageDialog(this, "Congratulations, you have solved the puzzle!");
-            }
-        }
-    }
-    
+
+    // Help create a new value for Sudoku 
     private boolean solveSudokuHelper(int[][] values, int row, int col) {
         if (row == 9) {
             row = 0;
@@ -277,14 +240,12 @@ private JTextField[][] board;
                 return true; // Puzzle solved
             }
         }
-        
         if (values[row][col] != 0) { // Skip filled cells
             return solveSudokuHelper(values, row + 1, col);
         }
-        
         ArrayList<Integer> candidates = getCandidateValues(row, col);
-        for (int candidate : candidates) {
-            values[row][col] = candidate;
+        for (int number : candidates) {
+            values[row][col] = number;
             if (solveSudokuHelper(values, row + 1, col)) {
                 return true;
             }
@@ -292,17 +253,26 @@ private JTextField[][] board;
         values[row][col] = 0; // Backtrack
         return false;
     }
-    
+
+    //Create and add numbers for the array number
     private ArrayList<Integer> getCandidateValues(int row, int col) {
         ArrayList<Integer> candidates = new ArrayList<Integer>();
-        for (int val = 1; val <= 9; val++) {
+        Random rand = new Random();
+        for (int val = 1; val < 10; val++) {
+            if (val == 1) {
+                val = val + rand.nextInt(3);
+            }
+              if (val == 2) {
+                val = val + rand.nextInt(3);
+            }
             if (isValidValue(row, col, val)) {
                 candidates.add(val);
             }
         }
         return candidates;
     }
-    
+
+    //create new game
     private void newGame() {
         clearBoard();
         Random rand = new Random();
@@ -329,13 +299,14 @@ private JTextField[][] board;
         }
         gameTimer.restart();
     }
-    
+
+    //Random location
     private int[][] generateRandomSudoku() {
         values = new int[9][9];
         solveSudokuHelper(values, 0, 0);
         return values;
     }
-    
+
     private void clearBoard() {
         for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 9; col++) {

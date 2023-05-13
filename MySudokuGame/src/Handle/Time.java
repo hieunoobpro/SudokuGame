@@ -17,9 +17,16 @@ public class Time {
     private int currentDifficulty = 0;
     private int timeRemaining = GAME_TIMES[currentDifficulty];
 
+    public Time(JTextField[][] board, JLabel timerLabel) {
+        this.board = board;
+        this.timerLabel = timerLabel;
+    }
+    
+
     private Timer gameTimer = new Timer(1000, new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
+            timeRemaining   = (GAME_TIMES[currentDifficulty]);
             JPanel TimePanel = new JPanel();
             timerLabel = new JLabel("Time: " + timeRemaining + " seconds");
             timerLabel.setForeground(Color.BLACK); // Set foreground color
@@ -31,8 +38,7 @@ public class Time {
                     timerLabel.setForeground(Color.red);
                 }
             } else {
-                gameTimer.stop();
-       
+                gameTimer.stop();     
                 JOptionPane.showMessageDialog(null, "Time's up! Game over.");
                 for (int row = 0; row < 9; row++) {
                     for (int col = 0; col < 9; col++) {
@@ -42,7 +48,6 @@ public class Time {
             }
         }
     });
-
     public JTextField[][] getBoard() {
         return board;
     }
