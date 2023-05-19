@@ -50,10 +50,6 @@ public class SudokuBoard extends JFrame implements ActionListener {
         timerLabel = new JLabel("Time: " + timeRemaining + " seconds");
         timerLabel.setForeground(Color.BLACK); // Set foreground color
         TimePanel.add(timerLabel);
-// Create a new JLabel with a background image
-        JLabel backgroundLabel = new JLabel(new ImageIcon("/Pictures/background.jpg"));
-        backgroundLabel.setLayout(new BorderLayout());
-        this.setContentPane(backgroundLabel);
 
         JPanel boardPanel = new JPanel();
         boardPanel.setLayout(new GridLayout(9, 9, 2, 2));
@@ -88,7 +84,7 @@ public class SudokuBoard extends JFrame implements ActionListener {
                 }
             }
         });
-//Create row and column
+        //Create row and column
         board = new JTextField[9][9];
         for (int blockRow = 0; blockRow < 3; blockRow++) {
             for (int blockCol = 0; blockCol < 3; blockCol++) {
@@ -106,7 +102,7 @@ public class SudokuBoard extends JFrame implements ActionListener {
                 boardPanel.add(blockPanel);
             }
         }
-//Create Buttons
+        //Create Buttons
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(Color.BLACK); // Set background color
         CheckButton = new JButton("Check");
@@ -152,8 +148,7 @@ public class SudokuBoard extends JFrame implements ActionListener {
 
         setVisible(true);
     }
-//actionPerformed for buttons
-
+    //actionPerformed for buttons
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == CheckButton) {
             checkSolution();
@@ -174,7 +169,7 @@ public class SudokuBoard extends JFrame implements ActionListener {
             newGame();
         }
     }
-
+    //Check to know if users are complete the game or not 
     private boolean checkSolution() {
         try {
             for (int row = 0; row < 9; row++) {
@@ -190,7 +185,7 @@ public class SudokuBoard extends JFrame implements ActionListener {
                         return false;
                     }
                     if (!isValidValue(row, col, number)) {
-                        JOptionPane.showMessageDialog(this, "The value of number is not corectr.");
+                        JOptionPane.showMessageDialog(this, "The value of number is not corect.");
                         return false;
                     }
                 }
@@ -219,8 +214,8 @@ public class SudokuBoard extends JFrame implements ActionListener {
             }
         }
         // Check if the value is valid for the box
-        int subBoardRow = row - row%3;
-        int subBoardCol = col - col%3;
+        int subBoardRow = row - row % 3;
+        int subBoardCol = col - col % 3;
         for (int i = subBoardRow; i < subBoardRow + 3; i++) {
             for (int j = subBoardCol; j < subBoardCol + 3; j++) {
                 if (values[i][j] == value && i != row && j != col) {
@@ -267,7 +262,7 @@ public class SudokuBoard extends JFrame implements ActionListener {
             if (val == 3) {
                 val = val + rand.nextInt(2);
             }
-              if (val == 4) {
+            if (val == 4) {
                 val = val + rand.nextInt(2);
             }
             if (isValidValue(row, col, val)) {
